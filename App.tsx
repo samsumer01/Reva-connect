@@ -46,11 +46,14 @@ function App() {
             setSession(session);
         });
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        const { data } = supabase.auth.onAuthStateChange((_event, session) => {
             setSession(session);
         });
 
-        return () => subscription.unsubscribe();
+        // Safely unsubscribe to prevent crashes on startup.
+        return () => {
+            data.subscription?.unsubscribe();
+        };
     }, []);
 
     useEffect(() => {
